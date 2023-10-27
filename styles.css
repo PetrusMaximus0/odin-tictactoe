@@ -1,0 +1,66 @@
+:root{
+    --blocksize: 200px
+}
+
+body{
+    background-color: beige;
+}
+
+button{
+    padding: 0;
+    background-color: white;
+    border:1px solid grey;
+    margin: -1px;
+    
+}
+
+li{
+    list-style: none;
+}
+
+h1{
+    font-size: 2em;
+}
+
+h1,h2{
+    margin:0;
+    text-align: center;
+}
+
+.board-container{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    
+    width: 300px;
+    height: 300px;
+    
+
+}
+
+.restart {
+    padding: 0.5rem 1rem;
+    border-radius: 0.85rem;
+}
+
+.content-wrapper{
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    justify-items: center;
+    gap:2rem;
+
+    border-radius: 1rem;
+    background-color: lightskyblue;
+
+    padding:2rem 3rem;
+}
+
+.content-wrapper > h2{
+    font-size: 2em;
+}
+
+.grid-container{
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 5rem;
+}
