@@ -10,26 +10,49 @@
 </head>
 <body>
     <div class="grid-container">
-        <nav class ="content-wrapper">
-            <h2>Options</h2>
-            <ul>
-                <li>option 1..</li>
-                <li>option 2..</li>
-            </ul>
-        </nav>
+        <header>
+            <nav class ="nav-wrapper">
+                <div class ="options">
+                    <h1>Options</h1>
+                    <form class ="player-name-form" action="">                          
+                        <input id="name"
+                                type="text"
+                                placeholder="Enter your name">
+                        <button type="submit"> Save </button>
+                    </form>
+                </div>
+
+                <section class="options-cards">
+                    <div class ="player">
+                        <h3 class = "name"> player name</h3>
+                        <p class ="token">Token: </p>
+                        <p class ="victories">Victores: </p>
+                    </div>
+                    <div class ="player">
+                        <h3 class ="name"> player name</h3>
+                        <p class ="token">Token: </p>
+                        <p class ="victories">Victores: </p>
+                    </div>                    
+                </section>
+
+                <section class="options-cards">
+                    <p class ="message"> Game message</p>
+                </section>
+
+            </nav>            
+        </header>
         <main class="content-wrapper">
             <h1>Tic Tac Toe</h1>
             <div class="board-container">
-                <button type="button"></button>
-                <button type="button"></button>
-                <button type="button"></button>
-                <button type="button"></button>
-                <button type="button"></button>
-                <button type="button"></button>
-                <button type="button"></button>
-                <button type="button"></button>
-                <button type="button"></button>
-        
+                <button class = "board-tile" type="button"></button>
+                <button class = "board-tile" type="button"></button>
+                <button class = "board-tile" type="button"></button>
+                <button class = "board-tile" type="button"></button>
+                <button class = "board-tile" type="button"></button>
+                <button class = "board-tile" type="button"></button>
+                <button class = "board-tile" type="button"></button>
+                <button class = "board-tile" type="button"></button>
+                <button class = "board-tile" type="button"></button>        
             </div>
             <button class="restart" type="button">RESTART</button>
         </main>
