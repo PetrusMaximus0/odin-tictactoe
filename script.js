@@ -1,3 +1,49 @@
+/**View*/
+const initView = (()=>{
+    const tileButtons = document.querySelectorAll(".board-tile");
+    const playerName = document.querySelector(".player > .name");
+    const victories = document.querySelectorAll(".victories");
+    const tokens = document.querySelectorAll(".token");
+    const gameMessage = document.querySelector(".message");
+    const restartButton = document.querySelector(".restart");
+
+    function updatePlayerToken(index, token) {
+        tokens[index].textContent = `Token: ${token}`;
+    }
+
+    function updateGameMessage(message) {
+        gameMessage.textContent = `${message}`;
+    }
+
+    function updateVictories(value1, value2) {
+        victories[0].textContent = `wins: ${value1}`;
+        victories[1].textContent = `wins: ${value2}`;
+    }
+
+    function updateName(name){
+        playerName.textContent = `${name}`;
+    }
+
+    function updateTile(index, token){
+        tileButtons[index].textContent = `${token}`;
+    }
+
+    function resetTiles(){
+        tileButtons.forEach(tile=> {
+            tile.textContent = "";
+        });
+    }
+
+    function updateRestartButton(value){
+        restartButton.textContent = `${value}`;
+    }
+
+    return {resetTiles, updateRestartButton, updatePlayerToken, updateGameMessage, updateVictories, updateName, updateTile}
+})();
+
+const view = initView;
+
+/**Model*/
 //Player object - Factory
 const playerFactory = (name, token) => {
     let wins = 0;
@@ -17,7 +63,6 @@ const playerFactory = (name, token) => {
     const incrementWins= () =>{wins +=1};
     return {setName, getName, getToken, setToken, getWins, incrementWins, addMove, getPlayerMoves, resetMoves};
 };
-
 //Gameboard object - IIFE
 //Define the gameboard tiles initialization function inside an IIFE
 const initGameboard = (() =>{
@@ -61,7 +106,6 @@ const initGameboard = (() =>{
         winningCombos.forEach(combo=>{
             if(combo === (playerMoves & combo)){
                 value = true;
-
             }
         })
         return value;
@@ -88,33 +132,41 @@ const initGameboard = (() =>{
     return {tiles, setToken, resetBoard, checkGameOver};
 
 })();
-
-//Game Object - This is a singleton and therefore we use an IIFE
-const initGame = (() => {
-    //State variables
-    let gameStarted = false;   
-    let gameState = false;
-
-    //
-    let passName = "defaultName";
-    let gameMessage = "Start a new game!";
-
-    //Instantiate players
+//Model
+const initModel = (()=>{
     const player1 = playerFactory("Player", "X");
     const player2 = playerFactory("CPU", "O");
-    
-    //Instantiate the gameboard tiles        
     const gameBoard = initGameboard;
-    console.log({gameBoard});
 
-    //
-    function setName() {
-        console.log(passName, "passing name");
-        player1.setName(passName);
-        
+    let gameStarted = false;
+    let gameOngoing = false;
+    let gameMessage = "Start a new game!";
+
+    //Initialize the visuals
+    view.updateGameMessage(gameMessage);
+    view.updatePlayerToken(0,player1.getToken());
+    view.updatePlayerToken(1,player2.getToken());
+    view.updateVictories(0,0);
+    view.updateName(player1.getName())
+    
+    //Function definition
+    function restartGame() {
+        if(gameStarted === false) {
+            gameStarted = true;
+            view.updateRestartButton("RESTART");
+            console.log("Started the game!");
+        }
+        gameMessage = "Game on!"
+        gameOngoing = true;
+        gameBoard.resetBoard();
+        player1.resetMoves();
+        player2.resetMoves();
+        //reset view
+        view.updateGameMessage(gameMessage);
+        view.updateVictories(player1.getWins(), player2.getWins());
+        view.resetTiles();
     }
 
-    //
     function playerMove(player, index){
         const moveSucessful = gameBoard.setToken(index, player.getToken());                
         if(moveSucessful){
@@ -125,7 +177,52 @@ const initGame = (() => {
         }
     }
 
-    //
+    function advanceGame(index){
+        function checkResult(){
+            let result = gameBoard.checkGameOver(player1, player2);
+            if(result){ 
+                gameOver(result);
+                return true;
+            }else{
+                return false;
+            }    
+        }
+        if(gameOngoing===true){
+            //set up player move
+            if(playerMove(player1, index) === false){
+                return;
+            }else{
+                view.updateTile(index, player1.getToken());
+            }
+            
+            let gameEnded = checkResult();
+
+            if(!gameEnded){
+                //set up computer move. temporary solution
+                for(let i = 0; i<1000; i++){
+                    let move = Math.floor(Math.random()*8);
+                    if (playerMove(player2, move)){
+                        view.updateTile(move, player2.getToken());                           
+                        break;
+                    }
+                    console.log("Wrong Cpu move");
+                }
+
+                //
+                gameEnded = checkResult();
+
+            }
+            
+        }else{
+            console.log("Restart the game to start a new game");
+        }
+    }
+
+    function setName(passName){
+        player1.setName(passName);
+        view.updateName(passName);
+    }
+
     function gameOver(endCase){
         if(endCase === "Draw"){
             gameMessage = "Game has ended in a draw!";
@@ -133,90 +230,42 @@ const initGame = (() => {
             gameMessage = `${endCase} has won the game!`;
         }
         gameOngoing = false;
+        view.updateGameMessage(gameMessage);
+        view.updateVictories(player1.getWins(), player2.getWins());
     }
 
-    //
-    function advanceGame(index){
-        if(gameOngoing===true){//set up player move
-            if(playerMove(player1, index) ===false){return} 
-                         
-            //required for the dom to update the tokens  
-            //
-            let result = gameBoard.checkGameOver(player1, player2);
-            if(result!=null){                    
-                gameOver(result);
-                return;
-            }
-            
-            //set up computer move. temporary solution
-            for(let i = 0; i<1000; i++){
-                let move = Math.floor(Math.random()*8);
-                if (playerMove(player2, move)){                           
-                    break;
-                }
-                console.log("Wrong Cpu move");
-            }
-
-
-            //
-            result = gameBoard.checkGameOver(player1, player2);
-            if(result!=null){                    
-                gameOver(result);
-                return;
-            }
-        }else{
-            console.log("Restart the game to start a new game");
-        }
-    }
-
-    //
-    function restartGame(){
-        if(gameStarted === false) {
-            gameMessage = "Game on!";
-            gameStarted = true;
-        }
-        gameOngoing = true;
-        gameBoard.resetBoard();
-        player1.resetMoves();
-        player2.resetMoves();
-           
-    }
+    return {restartGame, advanceGame, setName};
 
 })();
+const model = initModel;
 
-const initDisplayController = (()=> {    
-    //Get elements
-    const playerNames = document.querySelectorAll(".options-cards > .player > .name");
-    const playerTokens = document.querySelectorAll(".options-cards > .player > .token");
-    const playerVictories = document.querySelectorAll(".options-cards > .player > .victories");
-    const gameMessage = document.querySelector(".options-cards > .message");
+/**Controller*/
+const initController = (()=>{
+    // Tiles
+    tileButtons = document.querySelectorAll(".board-tile")
+    for ( let i = 0 ; i< tileButtons.length; i++){
+        tileButtons[i].addEventListener("click", () =>{
+        model.advanceGame(i);     
+        })
+    }
 
-    //Each of these will change the text inside the respective element
-    function updatePlayerName(name){}
-    function updatePlayerToken(player, token){}
-    function updatePlayerVictories(player, value){}
-    function updateGameMessage(message){}
-    
-    //return the functions to be exposed
-    return {};
+    // Restart/Start button
+    const reStartButton = document.querySelector(".restart");
+    reStartButton.addEventListener("click", () => {
+        model.restartGame();
+    })
+
+    // Name Input
+    const inputName = document.querySelector(".player-name-form");
+    inputName.addEventListener("submit", (event)=>{
+
+        //prevent default submission
+        event.preventDefault();
+
+        //get info from form
+        let playerName = document.getElementById("name").value;
+
+        //update name in player
+        model.setName(playerName);    
+    })
 })();
-
-const displayController = initDisplayController;
-
-//instantiate the game object
-//const game = initGame;
-//console.log(game, "The game object");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
