@@ -40,7 +40,6 @@ const initView = (()=>{
 
     return {resetTiles, updateRestartButton, updatePlayerToken, updateGameMessage, updateVictories, updateName, updateTile}
 })();
-
 const view = initView;
 
 /**Model*/
@@ -63,7 +62,7 @@ const playerFactory = (name, token) => {
     const incrementWins= () =>{wins +=1};
     return {setName, getName, getToken, setToken, getWins, incrementWins, addMove, getPlayerMoves, resetMoves};
 };
-//Gameboard object - IIFE
+
 //Define the gameboard tiles initialization function inside an IIFE
 const initGameboard = (() =>{
     const tiles = [];
@@ -132,6 +131,7 @@ const initGameboard = (() =>{
     return {tiles, setToken, resetBoard, checkGameOver};
 
 })();
+
 //Model
 const initModel = (()=>{
     const player1 = playerFactory("Player", "X");
