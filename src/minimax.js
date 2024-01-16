@@ -4,7 +4,8 @@ export function miniMaxSearch(game, state){
 }
 
 export function maxValue(game, state){
-    if(game.isTerminal(state)) return {value: game.utility(state, game.toMove()), move: null};
+    if(game.isTerminal(state)) 
+        return {value: game.utility(state, game.toMove(state)), move: null};
     
     let value = -Infinity;
     let move = null;
@@ -24,7 +25,8 @@ export function maxValue(game, state){
 
 export function minValue(game, state){
 
-    if(game.isTerminal(state)) return {value: game.utility(state, game.toMove()), move: null};
+    if(game.isTerminal(state)) 
+        return {value: game.utility(state, game.toMove(state)), move: null};
 
     let value = Infinity;
     let move = null;

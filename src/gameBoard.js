@@ -4,7 +4,7 @@ export default function() {
 
     //
     for(let i = 0; i < 9; i++){
-        tiles.push({token: ``})                
+        tiles.push({token: ''})                
     }
 
     //
@@ -14,7 +14,7 @@ export default function() {
             tilesFilled++;
             return true;
         }else{
-            //console.log("Spot is taken");
+            console.error("Spot is taken");
             return false;
         }
     }
